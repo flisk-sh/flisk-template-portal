@@ -174,6 +174,21 @@ describe("/v1 proxy", () => {
   });
 });
 
+describe("bootstrap key", () => {
+  it("accepts a fixed key with no sign-in and stores only its hash", async () => {
+    const p = make({ devLogin: undefined, bootstrapKey: "fi-preview-secret-1234" });
+    expect((await p.fetch(chat("fi-preview-secret-1234"))).status).toBe(200);
+    expect((await p.fetch(chat("fi-other"))).status).toBe(401);
+    expect(readFileSync(join(dir, "db.json"), "utf-8")).not.toContain("fi-preview-secret-1234");
+  });
+  it("does not add the key twice across restarts", async () => {
+    make({ bootstrapKey: "fi-once" });
+    make({ bootstrapKey: "fi-once" });
+    const db = JSON.parse(readFileSync(join(dir, "db.json"), "utf-8")) as { keys: unknown[] };
+    expect(db.keys).toHaveLength(1);
+  });
+});
+
 describe("pages", () => {
   it("serves the console and /health", async () => {
     const p = make();

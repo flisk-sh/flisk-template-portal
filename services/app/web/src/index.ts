@@ -32,6 +32,7 @@ const portal = createPortal({
   allowedModels: (process.env.ALLOWED_MODELS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
   github: clientId && clientSecret ? { clientId, clientSecret } : undefined,
   devLogin,
+  bootstrapKey: process.env.BOOTSTRAP_API_KEY || undefined,
 });
 
 Bun.serve({ port, hostname: process.env.HOST ?? (production ? "0.0.0.0" : "127.0.0.1"), fetch: portal.fetch });

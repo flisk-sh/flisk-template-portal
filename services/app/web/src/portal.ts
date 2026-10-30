@@ -17,6 +17,7 @@ export interface PortalOptions {
   maxBody?: number;                   // bytes
   ratePerMinute?: number;             // per API key
   maxActiveKeys?: number;             // per user
+  bootstrapKey?: string;              // a fixed API key accepted from the start, for a preview that has no sign-in
   fetchImpl?: typeof fetch;           // for tests
 }
 interface User { id: string; login: string; name: string; avatar: string; created: string }
@@ -42,6 +43,16 @@ export function createPortal(opts: PortalOptions) {
   const db: Db = existsSync(dbFile) ? JSON.parse(readFileSync(dbFile, "utf-8")) : { users: {}, keys: [] };
   const save = () => { writeFileSync(`${dbFile}.tmp`, JSON.stringify(db, null, 2)); renameSync(`${dbFile}.tmp`, dbFile); };
   const sign = (p: string) => createHmac("sha256", secret).update(p).digest("base64url");
+
+  // A preview run (a CI runner with a public link) has no sign-in: one key comes from a secret instead. Only its hash is stored.
+  if (opts.bootstrapKey) {
+    const hash = sha(opts.bootstrapKey);
+    if (!db.keys.some((k) => k.hash === hash)) {
+      db.users.bootstrap ??= { id: "bootstrap", login: "preview", name: "Preview key", avatar: "", created: new Date().toISOString() };
+      db.keys.push({ id: randomBytes(6).toString("hex"), userId: "bootstrap", name: "preview", hash, prefix: opts.bootstrapKey.slice(0, 5), last4: opts.bootstrapKey.slice(-4), created: new Date().toISOString(), lastUsed: null, requests: 0, input: 0, output: 0, revoked: false });
+      save();
+    }
+  }
 
   const states = new Map<string, number>(); // OAuth state -> expiry
   const rate = new Map<string, number[]>();
