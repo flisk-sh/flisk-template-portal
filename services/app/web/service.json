@@ -1,0 +1,12 @@
+{
+  "$schema": "https://flisk.sh/schema.service.json",
+  "schemaVersion": 1,
+  "appName": "web",
+  "appType": "backend",
+  "stack": "app",
+  "port": 4000,
+  "healthCheckPath": "/health",
+  "dependsOn": [],
+  "build": { "dockerfile": "Dockerfile", "context": "." },
+  "dev": { "command": "bun run dev", "watch": ["src/**/*", "public/**/*"] }
+}

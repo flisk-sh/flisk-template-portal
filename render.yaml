@@ -1,0 +1,25 @@
+# Render Blueprint. Create a GitHub OAuth app first (see README), then: render.com → New → Blueprint.
+# The free plan has no persistent disk, so users and keys reset on every deploy: use a paid plan with the disk below
+# for anything real.
+services:
+  - type: web
+    name: flisk-template-portal
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: frankfurt
+    autoDeploy: true
+    healthCheckPath: /health
+    disk:
+      name: portal-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PUBLIC_URL
+        value: https://your-portal.example.com
+      - key: UPSTREAM_URL
+        value: https://your-upstream.example.com
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal</title>
+<style>
+/* tokens from flisk-sh/roadmap (assets/css/style.css), dark first */
+:root{--bg:#08080c;--glow:rgba(34,197,94,.07);--panel:#111117;--tile:#17171f;--tile2:#1e1e28;--ink:#ececf1;--mut:rgba(236,236,241,.7);--faint:rgba(236,236,241,.48);--line:rgba(255,255,255,.08);--strong:rgba(255,255,255,.2);
+--acc:#22c55e;--accink:#04120a;--acctext:#6ee7a0;--adopt:#22c55e;--trial:#38bdf8;--assess:#f59e0b;--hold:#f43f5e;
+--side:#0d0d12;--r:16px;--font:"Satoshi","DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:light){:root{--bg:#f6f6f4;--glow:rgba(34,197,94,.08);--panel:#fff;--tile:#f0f0ed;--tile2:#e7e7e3;--ink:#16161a;--mut:#52525b;--faint:#71717a;--line:rgba(0,0,0,.09);--strong:rgba(0,0,0,.22);--acctext:#15803d;--side:#16161a}}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(60rem 30rem at 80% -10%,var(--glow),transparent 60%),var(--bg);color:var(--ink);font:15px/1.55 var(--font)}
+h1,h2,h3{font-family:var(--font);font-weight:700;letter-spacing:-.02em;margin:0}
+a{color:inherit}code,pre{font:13px/1.55 var(--mono)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+nav.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.logo svg{width:26px;height:26px;color:var(--acc)}
+.btn{display:inline-block;border:1px solid var(--strong);border-radius:999px;padding:9px 18px;font:600 12px var(--mono);letter-spacing:.04em;text-decoration:none;background:transparent;color:var(--ink);cursor:pointer}
+.btn.solid{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.hero{padding:64px 0 40px}.hero h1{font-size:clamp(36px,6.4vw,64px);line-height:1.02;max-width:12em}
+.hero p{max-width:34em;color:var(--mut);font-size:18px;margin:18px 0 26px}
+.kicker{color:var(--acctext);font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+section{padding:36px 0;border-top:1px solid var(--line)}section h2{font-size:28px;margin-bottom:6px}.sub{color:var(--mut);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}.cell h3{font-size:16px;margin-bottom:6px}.cell p{margin:0;color:var(--mut);font-size:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;margin-bottom:10px;border:1px solid var(--c,var(--line));border-radius:999px;color:var(--c,var(--faint))}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c,var(--faint))}
+.tag.ok{--c:var(--adopt)}.tag.assess{--c:var(--assess)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.two{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+pre{background:var(--tile);padding:14px;overflow:auto;margin:0;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}th{font:500 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--faint);text-align:left}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line)}th{border-bottom:1px solid var(--strong)}
+footer{padding:28px 0 48px;color:var(--faint);font-size:13px;border-top:1px solid var(--line)}
+#console{display:none;min-height:100vh}#console.on{display:grid;grid-template-columns:210px 1fr}
+@media(max-width:720px){#console.on{grid-template-columns:1fr}}
+aside{background:var(--side);color:#ececf1;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+aside .logo{padding:16px 14px;font-size:18px;border-bottom:1px solid rgba(255,255,255,.08)}
+aside .org{margin:12px;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 10px;font-size:13px}aside .role{margin:-6px 12px 10px;font:12px var(--mono);color:rgba(236,236,241,.5)}
+aside button{all:unset;cursor:pointer;display:block;padding:11px 14px;font:600 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;border-top:1px solid rgba(255,255,255,.08)}
+aside button:hover{background:rgba(255,255,255,.04)}
+aside button.on{background:var(--acc);color:var(--accink)}
+aside .who{margin-top:auto;padding:14px;font-size:12px;color:rgba(236,236,241,.5);border-top:1px solid rgba(255,255,255,.08)}
+main{padding:0}main header{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}main header h2{font-size:24px}
+.pane{display:none;padding:22px}.pane.on{display:block}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px}@media(max-width:720px){.tiles{grid-template-columns:1fr}}
+.tile{background:var(--panel);border:1px solid var(--line);border-bottom:3px solid var(--c);border-radius:var(--r);padding:16px 18px}.tile small{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}.tile b{display:block;font-size:34px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums}
+.note{font-size:12px;color:var(--faint);border:1px dashed var(--strong);border-radius:12px;padding:8px 12px;margin-bottom:16px}
+.input{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:9px 12px;font:inherit;width:100%;max-width:420px}
+
+.signin{max-width:480px;margin:12vh auto;padding:0 16px}
+</style>
+</head>
+<body>
+<div id="console" class="on">
+  <aside>
+    <div class="logo" id="brand">Portal</div>
+    <div class="org" id="who">Not signed in</div><div class="role">GitHub</div>
+    <button data-tab="keys">API keys</button><button data-tab="usage">Usage</button><button data-tab="docs">Docs</button>
+    <div class="who"><a href="/auth/logout" id="signout" style="color:inherit">Sign out</a></div>
+  </aside>
+  <main>
+    <header><h2 id="title">API keys</h2></header>
+
+    <div class="pane" id="p-login"><div class="signin card"><h3>Sign in</h3><p style="color:var(--mut)">Use your GitHub account to create API keys and see your usage.</p><p id="login-btns"></p><p id="login-note" style="color:var(--faint);font-size:13px"></p></div></div>
+
+    <div class="pane" id="p-keys">
+      <h3 style="margin-bottom:6px">Make your first request</h3><p style="color:var(--mut);margin-top:0">Replace <code>YOUR_API_KEY</code> with a key from below.</p>
+      <pre><code id="curl"></code></pre>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:22px 0 8px"><p style="color:var(--mut);margin:0">Keys authenticate requests. Keep them secret.</p><button class="btn solid" id="newkey">New API key</button></div>
+      <div id="newkey-box" class="card" style="display:none;margin-bottom:12px"><b>Copy this key now. It is shown once.</b><pre style="margin-top:8px"><code id="newkey-val"></code></pre></div>
+      <table id="keys-table"><thead><tr><th>Name</th><th>Key</th><th>Created</th><th>Last used</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="pane" id="p-usage">
+      <div class="tiles">
+        <div class="tile" style="--c:var(--assess)"><small>Total tokens</small><b id="t1">0</b></div>
+        <div class="tile" style="--c:var(--trial)"><small>Requests</small><b id="t2">0</b></div>
+        <div class="tile" style="--c:var(--adopt)"><small>Keys</small><b id="t3">0</b></div>
+      </div>
+      <table id="usage-table"><thead><tr><th>Key</th><th>Requests</th><th>Input</th><th>Output</th><th>Last used</th></tr></thead><tbody></tbody></table>
+      <p id="usage-empty" style="color:var(--faint)"></p>
+    </div>
+
+    <div class="pane" id="p-docs">
+      <h3>API</h3>
+      <p style="color:var(--mut);max-width:40em">Requests to <code>/v1/*</code> are forwarded to the upstream API. Send your key as a Bearer token.</p>
+      <pre><code id="docs-code"></code></pre>
+    </div>
+  </main>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const names={keys:"API keys",usage:"Usage",docs:"Docs"};
+let me=null,cfg={};
+const api=async(path,opt)=>{const r=await fetch(path,opt);if(r.status===401){me=null;return null}const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j};
+const fmt=n=>n.toLocaleString("en-US");
+const ago=t=>{if(!t)return"never";const m=Math.round((Date.now()-new Date(t))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"};
+const cell=(tr,txt)=>{const td=document.createElement("td");td.textContent=txt;tr.appendChild(td);return td};
+const example=()=>`curl ${location.origin}/v1/chat/completions \\\n  -H 'Authorization: Bearer YOUR_API_KEY' \\\n  -H 'Content-Type: application/json' \\\n  -d '{"model":"${(cfg.models&&cfg.models[0])||"your-model"}","messages":[{"role":"user","content":"Say hello!"}]}'`;
+async function load(tab){
+  if(tab==="keys"){$("#curl").textContent=example();const ks=await api("/api/keys");if(!ks)return;const tb=$("#keys-table tbody");tb.textContent="";
+    ks.forEach(k=>{const tr=document.createElement("tr");cell(tr,k.name);cell(tr,k.prefix+"…"+k.last4).style.fontFamily="var(--mono)";cell(tr,new Date(k.created).toLocaleDateString());cell(tr,ago(k.lastUsed));
+      const td=document.createElement("td"),b=document.createElement("button");b.className="btn";b.textContent="Revoke";b.onclick=async()=>{if(confirm("Revoke key "+k.name+"?")){await api("/api/keys/"+k.id,{method:"DELETE"});load("keys")}};td.appendChild(b);tr.appendChild(td);tb.appendChild(tr)})}
+  if(tab==="usage"){const u=await api("/api/usage");if(!u)return;$("#t1").textContent=fmt(u.totals.input+u.totals.output);$("#t2").textContent=fmt(u.totals.requests);$("#t3").textContent=fmt(u.keys.filter(k=>!k.revoked).length);
+    const tb=$("#usage-table tbody");tb.textContent="";u.keys.forEach(k=>{const tr=document.createElement("tr");cell(tr,k.name+(k.revoked?" (revoked)":""));cell(tr,fmt(k.requests));cell(tr,fmt(k.input));cell(tr,fmt(k.output));cell(tr,ago(k.lastUsed));tb.appendChild(tr)});
+    $("#usage-empty").textContent=u.keys.length?"":"No usage yet. Create an API key and make a request."}
+  if(tab==="docs")$("#docs-code").textContent=example();
+}
+async function show(tab){tab=names[tab]?tab:"keys";if(!me)me=await api("/api/me");
+  const pane=(me||tab==="docs")?tab:"login";
+  $$(".pane").forEach(p=>p.classList.toggle("on",p.id==="p-"+pane));$$("aside [data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  $("#title").textContent=pane==="login"?"Sign in":names[tab];$("#who").textContent=me?"@"+me.login:"Not signed in";$("#signout").style.display=me?"":"none";
+  try{history.replaceState(null,"","?section="+tab)}catch(e){}
+  if(me||tab==="docs")load(tab)}
+$$("aside [data-tab]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
+$("#newkey").addEventListener("click",async()=>{const name=prompt("Name for this key","default");if(name===null)return;
+  try{const k=await api("/api/keys",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name})});$("#newkey-val").textContent=k.key;$("#newkey-box").style.display="";load("keys")}catch(e){alert(e.message)}});
+(async()=>{cfg=await (await fetch("/api/config")).json();document.title=cfg.name;$("#brand").textContent=cfg.name;
+  const btns=$("#login-btns");
+  if(cfg.oauth){const a=document.createElement("a");a.className="btn solid";a.href="/auth/github";a.textContent="Sign in with GitHub";btns.appendChild(a)}
+  if(cfg.dev){const a=document.createElement("a");a.className="btn"+(cfg.oauth?"":" solid");a.href="/auth/dev";a.textContent=cfg.oauth?"Use local gh login":"Sign in with local GitHub (gh)";btns.appendChild(a);$("#login-note").textContent="Local dev sign-in: uses the GitHub account that gh is logged in as on the machine running this server."}
+  if(!cfg.oauth&&!cfg.dev)$("#login-note").textContent="Sign-in is not configured on this server. See the README.";
+  show(new URLSearchParams(location.search).get("section")||"keys")})();
+</script>
+</body></html>
