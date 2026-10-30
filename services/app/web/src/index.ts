@@ -32,6 +32,7 @@ const portal = createPortal({
   allowedModels: (process.env.ALLOWED_MODELS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
   github: clientId && clientSecret ? { clientId, clientSecret } : undefined,
   devLogin,
+  allowedLogins: (process.env.ALLOWED_LOGINS ?? "").split(",").map((x) => x.trim()).filter(Boolean),
   bootstrapKey: process.env.BOOTSTRAP_API_KEY || undefined,
 });
 

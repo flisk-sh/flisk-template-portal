@@ -67,6 +67,18 @@ describe("sign-in", () => {
     expect(start.headers.get("location")).toContain("https://github.com/login/oauth/authorize?client_id=id");
     expect((await p.fetch(req("/auth/callback?state=nope&code=x"))).status).toBe(400);
   });
+  it("refuses a GitHub login that is not on the allowlist", async () => {
+    const p = make({
+      github: { clientId: "id", clientSecret: "secret" },
+      allowedLogins: ["someone-else"],
+      fetchImpl: (async (input: RequestInfo | URL) =>
+        new Response(JSON.stringify(String(input).includes("access_token") ? { access_token: "tok" } : ME))) as typeof fetch,
+    });
+    const state = new URL((await p.fetch(req("/auth/github"))).headers.get("location") ?? "").searchParams.get("state");
+    const res = await p.fetch(req(`/auth/callback?state=${state}&code=abc`));
+    expect(res.status).toBe(403);
+    expect(res.headers.get("set-cookie")).toBeNull();
+  });
   it("completes the OAuth callback with a valid state", async () => {
     const calls: string[] = [];
     const p = make({

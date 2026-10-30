@@ -17,6 +17,7 @@ export interface PortalOptions {
   maxBody?: number;                   // bytes
   ratePerMinute?: number;             // per API key
   maxActiveKeys?: number;             // per user
+  allowedLogins?: string[];           // only these GitHub logins may sign in (case-insensitive); empty or missing: anyone
   bootstrapKey?: string;              // a fixed API key accepted from the start, for a preview that has no sign-in
   fetchImpl?: typeof fetch;           // for tests
 }
@@ -116,6 +117,7 @@ export function createPortal(opts: PortalOptions) {
       if (!tok.access_token) return json(400, { error: "GitHub did not return a token" });
       const gh = (await (await doFetch("https://api.github.com/user", { headers: { authorization: `Bearer ${tok.access_token}`, "user-agent": "flisk-portal" } })).json()) as GithubUser;
       if (!gh.id || !gh.login) return json(400, { error: "could not read the GitHub profile" });
+      if (opts.allowedLogins?.length && !opts.allowedLogins.some((l) => l.toLowerCase() === String(gh.login).toLowerCase())) return json(403, { error: `@${gh.login} is not allowed to sign in here` });
       return redirect("/?section=keys", { "set-cookie": sessionCookie(upsertUser(gh)) });
     }
     if (path === "/auth/dev") {

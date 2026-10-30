@@ -43,6 +43,7 @@ Open <http://localhost:4000>, choose **Sign in with local GitHub (gh)**. This si
 | `PORTAL_NAME` | Product name in the console. | `Portal` |
 | `DATA_DIR` | Users, hashed keys, usage and the cookie secret. Keep it on a volume. | `services/app/web/data` |
 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub OAuth app. | off |
+| `ALLOWED_LOGINS` | Comma-separated GitHub logins that may sign in. Empty means any GitHub user, so set it on a public host. | anyone |
 | `BOOTSTRAP_API_KEY` | One API key accepted from the start, with no sign-in. For a CI preview run; only its hash is stored. | off |
 | `FLISK_DEV_LOGIN=1` | Local sign-in as your `gh` user. Refused in production. | off |
 
