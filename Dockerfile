@@ -3,8 +3,8 @@
 FROM oven/bun:1.4-slim
 ENV NODE_ENV=production
 WORKDIR /app
-COPY services/app/web/package.json ./
-RUN bun install --production
+COPY services/app/web/package.json services/app/web/bun.lock ./
+RUN bun install --production --frozen-lockfile
 COPY services/app/web/src ./src
 COPY services/app/web/public ./public
 COPY services/app/web/tsconfig.json ./
