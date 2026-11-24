@@ -209,6 +209,22 @@ describe("bootstrap key", () => {
   });
 });
 
+describe("upstream throttling", () => {
+  it("forwards the upstream retry delay with a rate-limit response", async () => {
+    const p = make({
+      fetchImpl: (async () => new Response('{"error":"slow down"}', {
+        status: 429,
+        headers: { "content-type": "application/json", "retry-after": "42" },
+      })) as unknown as typeof fetch,
+    });
+    const { key } = await newKey(p, await login(p));
+    const response = await p.fetch(chat(key));
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("42");
+    expect(await response.json()).toEqual({ error: "slow down" });
+  });
+});
+
 describe("pages", () => {
   it("serves the console and /health", async () => {
     const p = make();

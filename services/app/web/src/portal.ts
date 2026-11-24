@@ -189,7 +189,10 @@ export function createPortal(opts: PortalOptions) {
         key.lastUsed = new Date().toISOString();
         save();
       }
-      return new Response(text, { status: up.status, headers: { "content-type": up.headers.get("content-type") ?? "application/json" } });
+      const headers = new Headers({ "content-type": up.headers.get("content-type") ?? "application/json" });
+      const retryAfter = up.headers.get("retry-after");
+      if (retryAfter !== null) headers.set("retry-after", retryAfter);
+      return new Response(text, { status: up.status, headers });
     }
     return json(404, { error: "not found" });
   }
